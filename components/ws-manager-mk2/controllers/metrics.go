@@ -132,7 +132,6 @@ func (m *controllerMetrics) recordWorkspaceStartupTime(log *logr.Logger, ws *wor
 	}
 
 	duration := time.Since(ws.CreationTimestamp.Time)
-	log.Info("workspace startup time", "ws", ws.Name, "duration", duration)
 	hist.Observe(float64(duration.Seconds()))
 }
 
@@ -186,6 +185,7 @@ func (m *controllerMetrics) countWorkspaceStop(log *logr.Logger, ws *workspacev1
 	counter, err := m.totalStopsCounterVec.GetMetricWithLabelValues(reason, tpe, class)
 	if err != nil {
 		log.Error(err, "could not count workspace stop", "reason", "unknown", "type", tpe, "class", class)
+		return
 	}
 
 	counter.Inc()
@@ -198,6 +198,7 @@ func (m *controllerMetrics) countTotalBackups(log *logr.Logger, ws *workspacev1.
 	counter, err := m.totalBackupCounterVec.GetMetricWithLabelValues(tpe, class)
 	if err != nil {
 		log.Error(err, "could not count workspace backup", "type", tpe, "class", class)
+		return
 	}
 
 	counter.Inc()
@@ -210,6 +211,7 @@ func (m *controllerMetrics) countTotalBackupFailures(log *logr.Logger, ws *works
 	counter, err := m.totalBackupFailureCounterVec.GetMetricWithLabelValues(tpe, class)
 	if err != nil {
 		log.Error(err, "could not count workspace backup failure", "type", tpe, "class", class)
+		return
 	}
 
 	counter.Inc()
@@ -222,6 +224,7 @@ func (m *controllerMetrics) countTotalRestores(log *logr.Logger, ws *workspacev1
 	counter, err := m.totalRestoreCounterVec.GetMetricWithLabelValues(tpe, class)
 	if err != nil {
 		log.Error(err, "could not count workspace restore", "type", tpe, "class", class)
+		return
 	}
 
 	counter.Inc()
@@ -234,6 +237,7 @@ func (m *controllerMetrics) countTotalRestoreFailures(log *logr.Logger, ws *work
 	counter, err := m.totalRestoreFailureCounterVec.GetMetricWithLabelValues(tpe, class)
 	if err != nil {
 		log.Error(err, "could not count workspace restore failure", "type", tpe, "class", class)
+		return
 	}
 
 	counter.Inc()
