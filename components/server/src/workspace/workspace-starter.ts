@@ -127,6 +127,7 @@ import { ImageSourceProvider } from "./image-source-provider";
 import { WorkspaceClassesConfig } from "./workspace-classes";
 import { SYSTEM_USER } from "../authorization/authorizer";
 import { ResolvedEnvVars } from "../user/env-var-service";
+import { WorkspaceStartController } from "./workspace-start-controller";
 
 export interface StartWorkspaceOptions extends GitpodServer.StartWorkspaceOptions {
     rethrow?: boolean;
@@ -214,6 +215,7 @@ export class WorkspaceStarter {
         @inject(EntitlementService) private readonly entitlementService: EntitlementService,
         @inject(RedisMutex) private readonly redisMutex: RedisMutex,
         @inject(RedisPublisher) private readonly publisher: RedisPublisher,
+        @inject(WorkspaceStartController) private readonly workspaceStartController: WorkspaceStartController,
     ) {}
     public async startWorkspace(
         ctx: TraceContext,
@@ -926,6 +928,7 @@ export class WorkspaceStarter {
             }
 
             const usageAttributionId = AttributionId.createFromOrganizationId(workspace.organizationId);
+            const controllerId = this.workspaceStartController.getControllerId();
             const now = new Date().toISOString();
             const instance: WorkspaceInstance = {
                 id: uuidv4(),
@@ -942,6 +945,7 @@ export class WorkspaceStarter {
                 configuration,
                 usageAttributionId: usageAttributionId && AttributionId.render(usageAttributionId),
                 workspaceClass,
+                controllerId,
             };
 
             if (WithReferrerContext.is(workspace.context)) {

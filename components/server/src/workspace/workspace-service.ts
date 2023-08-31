@@ -440,7 +440,17 @@ export class WorkspaceService {
     ): Promise<StartWorkspaceResult> {
         await this.auth.checkPermissionOnWorkspace(user.id, "start", workspaceId);
 
-        const workspace = await this.doGetWorkspace(user.id, workspaceId);
+        const { workspace, latestInstance } = await this.getWorkspace(user.id, workspaceId);
+        if (latestInstance) {
+            if (latestInstance.status.phase !== "stopped") {
+                // We already have a running workspace instance
+                return {
+                    instanceID: latestInstance.id,
+                    workspaceURL: latestInstance.ideUrl,
+                };
+            }
+        }
+
         const mayStartPromise = this.mayStartWorkspace(
             ctx,
             user,
