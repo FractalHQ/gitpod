@@ -5,10 +5,10 @@
  */
 
 import * as http from "http";
-import * as express from "express";
-import * as ws from "ws";
+import express from "express";
+import WebSocket from "ws";
 import * as bodyParser from "body-parser";
-import * as cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import { injectable, inject } from "inversify";
 import * as prom from "prom-client";
 import { SessionHandler } from "./session-handler";
@@ -162,7 +162,7 @@ export class Server {
             /**
              * Verify the web socket handshake request.
              */
-            const verifyClient: ws.VerifyClientCallbackAsync = async (info, callback) => {
+            const verifyClient: WebSocket.VerifyClientCallbackAsync = async (info, callback) => {
                 let authenticatedUsingBearerToken = false;
                 if (info.req.url === "/v1") {
                     // Connection attempt with Bearer-Token: be less strict for now
@@ -217,7 +217,7 @@ export class Server {
                 this.sessionHandler.websocket(),
                 ...initSessionHandlers,
                 wsPingPongHandler.handler(),
-                (ws: ws, req: express.Request) => {
+                (ws: WebSocket, req: express.Request) => {
                     websocketConnectionHandler.onConnection((req as any).wsConnection, req);
                 },
             );
@@ -228,7 +228,7 @@ export class Server {
                     (request as any).wsConnection = createWebSocketConnection(websocket, console);
                 },
                 wsPingPongHandler.handler(),
-                (ws: ws, req: express.Request) => {
+                (ws: WebSocket, req: express.Request) => {
                     websocketConnectionHandler.onConnection((req as any).wsConnection, req);
                 },
             );
