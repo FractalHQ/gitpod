@@ -8,7 +8,7 @@ COPY components-server--app /installer/
 WORKDIR /app
 RUN /installer/install.sh
 
-FROM cgr.dev/chainguard/node:18.17.1@sha256:fbaecf4d6ac9883699078c0b501aad22c866f9ce039d009212c0eed260914875
+FROM cgr.dev/chainguard/node:18.17.1@sha256:511810b38565da304cdd17d488ea74401c4fa95097e78e0791e87af0af70f69d
 ENV NODE_OPTIONS="--unhandled-rejections=warn --max_old_space_size=2048"
 
 EXPOSE 3000
